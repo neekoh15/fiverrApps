@@ -16,8 +16,6 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
             <img src="img/player.jpg" style="width: 45px; height: 45px;border-radius: 45px;">
         `;
 
-        
-
         // Append the player card to the chat window
         let chatWindow = document.querySelector('.chat-window');
         chatWindow.appendChild(playerCard);
