@@ -66,8 +66,6 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
 
         // Append the bot card to the chat window
         chatWindow.appendChild(botCard);
-
-    
     }
 });
 
