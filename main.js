@@ -56,7 +56,6 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
             clearInterval(loadingInterval);
         }
         
-
         // Create bot response card
         let botCard = document.createElement('div');
         botCard.classList.add('bot-response');
@@ -68,7 +67,7 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
         // Append the bot card to the chat window
         chatWindow.appendChild(botCard);
 
-        
+    
     }
 });
 
