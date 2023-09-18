@@ -1,10 +1,18 @@
 document.querySelector('.chat-input input').addEventListener('keydown', async function(event) {
     // Check if the key pressed is "ENTER" and the input field is not empty
+
+    
+
     console.log('HERE!')
     if (event.keyCode === 13 && this.value.trim() !== '') {
-        event.preventDefault();
+
+        
 
         let playerMessage = this.value.trim();
+
+        // Clear the input field
+        this.value = '';
+        event.preventDefault();
 
         // Create player chat card
         let playerCard = document.createElement('div');
@@ -14,32 +22,23 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
             <img src="img/player.jpg" style="width: 45px; height: 45px;border-radius: 45px;">
         `;
 
+        
+
         // Append the player card to the chat window
         let chatWindow = document.querySelector('.chat-window');
         chatWindow.appendChild(playerCard);
 
         let botMessage;
 
+        // Load "writing" animation
         let loadingCard = document.createElement('div');
-        loadingCard.classList.add('bot-response');
-        loadingCard.innerHTML = `
-            <img src="img/NPC.jpg" style="width: 45px; height: 45px;border-radius: 45px;">
-            <div class="b-contenido">.</div>
-        `;
-        chatWindow.appendChild(loadingCard);
-
-        let loadingText = loadingCard.querySelector('.b-contenido');
-        let dotCount = 1;
-        let loadingInterval = setInterval(() => {
-            loadingText.textContent = '.'.repeat(dotCount);
-            dotCount = (dotCount % 3) + 1;
-        }, 500);
+        let loadingInterval = writingAnimation(chatWindow, loadingCard);
 
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
         // Make an asynchronous HTTP POST request to get the bot's response
         try {
-            let response = await fetch('https://dummyapi.com/endpoint', {
+            let response = await fetch('https://localhost:5050', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -60,10 +59,11 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
             console.error("There was a problem with the fetch operation:", error.message);
             await new Promise(resolve => setTimeout(resolve, 1000));
             botMessage = "HERE GOES THE RESPONSE"; // Default message for bot response in case of an error
+        } finally {
+            chatWindow.removeChild(loadingCard);
+            clearInterval(loadingInterval);
         }
-
-        chatWindow.removeChild(loadingCard);
-        clearInterval(loadingInterval);
+        
 
         // Create bot response card
         let botCard = document.createElement('div');
@@ -76,43 +76,43 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
         // Append the bot card to the chat window
         chatWindow.appendChild(botCard);
 
-        // Clear the input field
-        this.value = '';
-
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-
-        // Use Web Speech API to reproduce the bot's response as voice
-        // Fetch all available voices
-        window.speechSynthesis.onvoiceschanged = function() {
-            let voices = window.speechSynthesis.getVoices();
-            let maleVoices = voices.filter(voice => voice.name.toLowerCase().includes('male') || voice.lang.includes('en-US'));
         
-            if (maleVoices.length > 0) {
-                let speech = new SpeechSynthesisUtterance(botMessage);
-                speech.voice = maleVoices[0];
-                speech.pitch = 0.7;  // Adjust to make the voice low-tone
-                window.speechSynthesis.speak(speech);
-            }
-        };
-        
-        // This line ensures that if the voices are already loaded before the event listener is set, the event still gets triggered
-        window.speechSynthesis.getVoices();
-
-        console.log(voices)
-
-        // Filter for male voices (this is a bit heuristic and may need adjustments based on the available voices in the browser)
-        let maleVoices = voices.filter(voice => voice.name.toLowerCase().includes('male') || voice.lang.includes('en-US'));
-
-        // If male voices are available, pick the first one
-        if (maleVoices.length > 0) {
-            speech.voice = maleVoices[0];
-        }
-
-        // Set pitch to make the voice low-tone (1.0 is the default pitch, lower values make the tone lower)
-        speech.pitch = 0.1;
-
-        // Speak out the message
-        window.speechSynthesis.speak(speech);
-
     }
 });
+
+
+// Get all buttons with the class "plan-option"
+const buttons = document.querySelectorAll('.plan-option');
+
+// Add an event listener to each button
+buttons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove the "selected" class from all buttons
+        buttons.forEach(btn => {
+            btn.classList.remove('selected');
+        });
+
+        // Add the "selected" class to the clicked button
+        this.classList.add('selected');
+    });
+});
+
+// Logic within the loading function
+function writingAnimation(chatWindow, loadingCard) {
+    
+    loadingCard.classList.add('bot-response');
+    loadingCard.innerHTML = `
+        <img src="img/NPC.jpg" style="width: 45px; height: 45px;border-radius: 45px;">
+        <div class="b-contenido" style="min-width:2rem; font-weight:700">.</div>
+    `;
+    chatWindow.appendChild(loadingCard);
+
+    let loadingText = loadingCard.querySelector('.b-contenido');
+    let dotCount = 1;
+    let loadingInterval = setInterval(() => {
+        loadingText.textContent = '.'.repeat(dotCount);
+        dotCount = (dotCount % 3) + 1;
+    }, 300);
+
+    return loadingInterval
+}
