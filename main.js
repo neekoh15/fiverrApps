@@ -69,7 +69,6 @@ document.querySelector('.chat-input input').addEventListener('keydown', async fu
     }
 });
 
-
 // Get all buttons with the class "plan-option"
 const buttons = document.querySelectorAll('.plan-option');
 
