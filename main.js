@@ -1,13 +1,8 @@
 document.querySelector('.chat-input input').addEventListener('keydown', async function(event) {
     // Check if the key pressed is "ENTER" and the input field is not empty
-
-    
-
-    console.log('HERE!')
     if (event.keyCode === 13 && this.value.trim() !== '') {
 
         
-
         let playerMessage = this.value.trim();
 
         // Clear the input field
